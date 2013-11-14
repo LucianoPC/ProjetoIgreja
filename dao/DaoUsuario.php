@@ -2,7 +2,9 @@
 
 use Exception;
 
+$pathRaiz = $_SERVER['DOCUMENT_ROOT']. substr($_SERVER['PHP_SELF'],0, strpos($_SERVER['PHP_SELF'],"/",1));
 
+require_once $pathRaiz . '/dao/ConexaoComBanco.php';
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -19,8 +21,7 @@ class DaoUsuario {
     
     private $ERRO_CADASTRAR = "Nao foi possivel cadastrar o usuario.
                                Informe o Administrador.";
-    private $ERRO = "Nao foi possivel se comunicar com o Banco de Dados.
-                     Informe o Administrador.";
+    private $ERRO = "Erro na comunicação com o Banco de Dados. Informe o Administrador.";
     private $ERRO_USUARIO_INEXISTENTE = "Usuario nao existe";
     private $ERRO_USUARIO_EXISTENTE = "Usuario ja existe";
     private $ERRO_ALTERAR_SENHA = "Nao foi possivel alterar a senha";
@@ -28,13 +29,8 @@ class DaoUsuario {
     private $conexaoComBanco;
     
     public function __construct() {
-        $this->includes();
         $this->conexaoComBanco = new ConexaoComBanco();
-    }
-    
-    public function includes(){
-        include_once 'ConexaoComBanco.php';
-    }
+    }    
     
     public function cadastrar($usuario){
         if ($this->existeLogin($usuario)) {
@@ -45,13 +41,22 @@ class DaoUsuario {
         $this->executarQuery($query, $this->ERRO_CADASTRAR);
     }
     
-    public function alterarSenha($usuario, $novaSenha){
-        if (!$this->existeLogin($usuario)) {
+    public function alterarSenha($usuario, $novaSenha){        
+        if (!$this->existeLoginSenha($usuario)) {
             throw new Exception($this->ERRO_USUARIO_INEXISTENTE);
         }
         
         $query = $this->getQueryAlterarSenha($usuario, $novaSenha);
         $this->executarQuery($query, $this->ERRO_ALTERAR_SENHA);
+    }
+    
+    public function fazerPrimeiroAcesso($usuario){
+        if (!$this->existeLoginSenha($usuario)) {
+            throw new Exception($this->ERRO_USUARIO_INEXISTENTE);
+        }
+        
+        $query = $this->getQueryFazerPrimeiroAcesso($usuario);
+        $this->executarQuery($query, $this->ERRO);
     }
 
     public function existeLoginSenha($usuario){
@@ -62,6 +67,7 @@ class DaoUsuario {
         }
     }
 
+    
     
     public function existeLogin($usuario){
         $listaUsuarios = $this->getListaUsuarios();
@@ -77,7 +83,6 @@ class DaoUsuario {
     
     public function existeSenha($usuario){
         $listaUsuarios = $this->getListaUsuarios();
-        
         foreach ($listaUsuarios as $u) {
             if ($u->getSenha() == $usuario->getSenha()) {
                 return true;
@@ -100,14 +105,9 @@ class DaoUsuario {
             $login = mysql_result($resultadoQuery , $i, "login");
             $senha = mysql_result($resultadoQuery , $i, "senha");
             $primeiroAcesso = mysql_result($resultadoQuery , $i, "primeiroAcesso");
-            
-            if($primeiroAcesso == 1){
-                $primeiroAcesso = true;
-            }else{
-                $primeiroAcesso = false;
-            }
-            
+                        
             $usuario = new Usuario($login, $senha, $primeiroAcesso);
+            
             array_push($lista, $usuario);
         }
         
@@ -149,4 +149,14 @@ class DaoUsuario {
         return $query;
     }
     
+    private function getQueryFazerPrimeiroAcesso($usuario){
+        $query = "UPDATE `t_usuario` SET ";
+        $query .= "`primeiroAcesso` = '0' ";
+        $query .= "WHERE login = '" . $usuario->getLogin() . "'";
+        
+        return $query;
+    }
+    
+    //UPDATE  `projetoigreja`.`t_usuario` SET  `primeiroAcesso` =  '0' WHERE  `t_usuario`.`login` =  'luciano_prestes';
+
 }

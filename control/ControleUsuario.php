@@ -2,6 +2,11 @@
 
 use Exception;
 
+$pathRaiz = $_SERVER['DOCUMENT_ROOT']. substr($_SERVER['PHP_SELF'],0, strpos($_SERVER['PHP_SELF'],"/",1));
+
+require_once $pathRaiz . '/model/Usuario.php';
+require_once $pathRaiz . '/dao/DaoUsuario.php';
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -18,23 +23,26 @@ class ControleUsuario {
     private $daoUsuario;
     
     public function __construct() {
-        $this->includes();
         $this->daoUsuario = new DaoUsuario();
-    }
-    
-    public function includes(){
-        $pathRaiz = $_SERVER['DOCUMENT_ROOT']. substr($_SERVER['PHP_SELF'],0, strpos($_SERVER['PHP_SELF'],"/",1));
-        
-        require_once $pathRoot . '/model/Usuario.php';
-        require_once $pathRoot . '/dao/DaoUsuario.php';
     }
     
     public function cadastrar($usuario){
         $this->daoUsuario->cadastrar($usuario);
     }
     
-    public function alterarSenha($usuario, $novaSenha){
+    public function alterarSenha($login, $antigaSenha, $novaSenha){        
+        $usuario = $this->getUsuario($login);
+        if($usuario->getSenha() != $antigaSenha){
+            throw new Exception("Senha Invalida!");
+        }
+        
         $this->daoUsuario->alterarSenha($usuario, $novaSenha);
+        $usuario->setSenha($novaSenha);
+        $this->setUsuarioLogado($usuario);
+        
+        if($this->isPrimeiroAcesso($login)){
+            $this->fazerPrimeiroAcesso($login, $novaSenha);
+        }
     }
         
     public function fazerLogin($login, $senha){
@@ -42,13 +50,39 @@ class ControleUsuario {
         $this->fazerLoginUsuario($usuario);
     }
     
-    private function fazerLoginUsuario($usuario){
-        if ( !$this->daoUsuario->existeLoginSenha($usuario)){
+    private function fazerPrimeiroAcesso($login, $senha){
+        $usuario = $this->getUsuario($login);
+        if($usuario->getSenha() != $senha){
             throw new Exception("Usuario nao cadastrado");
         }
         
+        $this->daoUsuario->fazerPrimeiroAcesso($usuario);
+    }
+    
+    public function getUsuarioLogado(){
+        $login = $_COOKIE["login"];
+        $senha = $_COOKIE["senha"];
+                
+        $usuario = $this->getUsuario($login);
+        
+        if($usuario->getSenha() != $senha){
+            throw new Exception("VVVVoce nao esta cadastrado no sistema");
+        }
+        
+        return $usuario;
+    }
+    
+    private function setUsuarioLogado($usuario){
         setcookie("login", $usuario->getLogin());
-        setcookie("senha", $usuario->getLogin());
+        setcookie("senha", $usuario->getSenha());
+    }
+    
+    private function fazerLoginUsuario($usuario){
+        if ( !$this->daoUsuario->existeLoginSenha($usuario)){
+            throw new Exception("Usuario nao cadastrado, ou senha incorreta.");
+        }
+        
+        $this->setUsuarioLogado($usuario);
     }
     
     public function isPrimeiroAcesso($login){
@@ -56,9 +90,17 @@ class ControleUsuario {
         return $usuario->isPrimeiroAcesso();
     }
     
-    public function verificarSeEstaLogado($usuario){
+    public function verificarSeEstaLogado(){
+        $usuario = $this->getUsuarioLogado();
+        
         if (!$this->daoUsuario->existeLoginSenha($usuario)){
            throw new Exception("Voce nao esta logado no sistema"); 
+        }
+        
+        if ($usuario) {
+            return true;
+        } else {
+            return false;
         }
     }
 

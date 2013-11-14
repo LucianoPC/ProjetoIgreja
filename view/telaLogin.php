@@ -4,6 +4,14 @@ To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
+
+<?php
+    $pathRaiz = $_SERVER['DOCUMENT_ROOT']. substr($_SERVER['PHP_SELF'],0, strpos($_SERVER['PHP_SELF'],"/",1));
+
+    require_once $pathRaiz . '/control/ControleUsuario.php';
+    require_once $pathRaiz . '/model/Alerta.php';
+?>
+
 <html>
     <head>
         <meta charset="UTF-8">
@@ -31,28 +39,24 @@ and open the template in the editor.
         <?php
             function fazerLogin()
             {
-                $pathRaiz = $_SERVER['DOCUMENT_ROOT']. substr($_SERVER['PHP_SELF'],0, strpos($_SERVER['PHP_SELF'],"/",1));
-                
-                require_once $pathRaiz . '/control/ControleUsuario.php';
-                        
                 try{
                     $controleUsuario = new ControleUsuario();
                     
-                    $controleUsuario->fazerLogin($_POST['login'], $_POST['senha']);
-                    
-                    echo '  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
-                                alert ("Login realizado com sucesso!");
-                            </SCRIPT>';
+                    $controleUsuario->fazerLogin($_POST['login'], $_POST['senha']);         
+                                        
+                    if ($controleUsuario->isPrimeiroAcesso($_COOKIE['login'])) {
+                        $pathRaiz = substr($_SERVER['PHP_SELF'],0, strpos($_SERVER['PHP_SELF'],"/",1));
+                        header('Location: ' . $pathRaiz . '/view/telaAlterarSenha.php');
+                    }
                     
                 } catch (Exception $ex) {
-                    echo '  <SCRIPT LANGUAGE="JavaScript" TYPE="text/javascript">
-                                alert ("Usuario nao cadastrado, ou a senha esta incorreta.");
-                            </SCRIPT>';
+                    Alerta::alertar($ex->getMessage());
                 }
             }
             if(isset($_POST['entrar']))
             {
-               fazerLogin();
+                $_POST['senha'] = md5($_POST['senha']);
+                fazerLogin();
             } 
         ?>
         
