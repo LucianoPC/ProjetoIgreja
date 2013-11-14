@@ -2,7 +2,7 @@
 
 use Exception;
 
-include './ConexaoComBanco.php';
+
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -28,7 +28,12 @@ class DaoUsuario {
     private $conexaoComBanco;
     
     public function __construct() {
+        $this->includes();
         $this->conexaoComBanco = new ConexaoComBanco();
+    }
+    
+    public function includes(){
+        include_once 'ConexaoComBanco.php';
     }
     
     public function cadastrar($usuario){
@@ -59,7 +64,7 @@ class DaoUsuario {
 
     
     public function existeLogin($usuario){
-        $listaUsuarios = $this->getListaUsuriarios();
+        $listaUsuarios = $this->getListaUsuarios();
         
         foreach ($listaUsuarios as $u) {
             if ($u->getLogin() == $usuario->getLogin()) {
@@ -71,7 +76,7 @@ class DaoUsuario {
     }
     
     public function existeSenha($usuario){
-        $listaUsuarios = $this->getListaUsuriarios();
+        $listaUsuarios = $this->getListaUsuarios();
         
         foreach ($listaUsuarios as $u) {
             if ($u->getSenha() == $usuario->getSenha()) {
@@ -81,7 +86,7 @@ class DaoUsuario {
         return false;
     }
     
-    public function getListaUsuriarios(){
+    public function getListaUsuarios(){
         $query = $this->getQueryListaUsuarios();
         $resultadoQuery = $this->executarQuery($query);
         
@@ -94,8 +99,15 @@ class DaoUsuario {
         for ($i = 0; $i < mysql_num_rows($resultadoQuery); $i++){
             $login = mysql_result($resultadoQuery , $i, "login");
             $senha = mysql_result($resultadoQuery , $i, "senha");
+            $primeiroAcesso = mysql_result($resultadoQuery , $i, "primeiroAcesso");
             
-            $usuario = new Usuario($login, $senha);
+            if($primeiroAcesso == 1){
+                $primeiroAcesso = true;
+            }else{
+                $primeiroAcesso = false;
+            }
+            
+            $usuario = new Usuario($login, $senha, $primeiroAcesso);
             array_push($lista, $usuario);
         }
         

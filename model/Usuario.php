@@ -15,10 +15,12 @@ class Usuario {
     
     private $login;
     private $senha;
+    private $primeiroAcesso;
     
-    public function __construct($login, $senha) {
+    public function __construct($login, $senha, $primeiroAcesso = 0) {
         $this->login = $login;
         $this->senha = $senha;
+        $this->primeiroAcesso = $primeiroAcesso;
     }
 
     public function getLogin() {
@@ -36,5 +38,14 @@ class Usuario {
     public function setSenha($senha) {
         $this->senha = $senha;
     }
+    
+    public function isPrimeiroAcesso() {
+        return $this->primeiroAcesso;
+    }
+
+    public function setPrimeiroAcesso($primeiroAcesso) {
+        $this->primeiroAcesso = $primeiroAcesso;
+    }
+
 
 }

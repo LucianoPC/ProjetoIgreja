@@ -2,9 +2,9 @@
 ob_start();
 session_start();
 
-include 'dao/ConexaoComBanco.php';
-include 'dao/DaoUsuario.php';
-include 'model/Usuario.php';
+
+require_once './control/ControleUsuario.php';
+require_once 'model/Usuario.php';
 
 ?>
 <!DOCTYPE html>
@@ -21,7 +21,7 @@ and open the template in the editor.
     <body>
         <?php
             
-            $login = "Luciano";
+            $login = "luciano_prestes";
             $senha = "123";
             $usuario = new Usuario($login, $senha);
             
@@ -29,25 +29,34 @@ and open the template in the editor.
             echo "Login: " . $usuario->getLogin() . "<br>";
             echo "Senha: " . $usuario->getSenha() . "<br>";
             
-            $daoUsuario = new DaoUsuario();
-            echo "<br>DaoUsuario Instanciado <br>";
             
             try{
-                $daoUsuario->cadastrar($usuario);
+                $controleUsuario = new ControleUsuario();
+                echo "<br>ControleUsuario Instanciado <br>";
+            } catch (Exception $e){
+                echo "<br>" . $e->getMessage() . "<br>";
+            }
+            
+            
+            try{
+                $controleUsuario->cadastrar($usuario);
                 echo "Usuario Cadastrado";
             } catch (Exception $e){
                 echo "<br>" . $e->getMessage() . "<br>";
             }
             
+            
             try{
-                $daoUsuario->alterarSenha($usuario, "987");
+                $controleUsuario->alterarSenha($usuario, "453");
                 echo "Senha Alterada";
             } catch (Exception $e){
                 echo "<br>" . $e->getMessage() . "<br>";
             }
             
+            
+            
             try{
-                $lista = $daoUsuario->getListaUsuriarios();
+                $lista = $controleUsuario->getListaUsuarios();
                 echo "<br><br>Lista de Usuarios Carregada <br>";
                 $sizeLista = count($lista);
                 echo "Imprimindo usuarios: <br>";
@@ -60,6 +69,10 @@ and open the template in the editor.
             } catch (Exception $e){
                 echo "<br>" . $e->getMessage() . "<br>";
             }
+            
+            $resultadoMD5 = md5("luciano_prestes");
+            echo "<br><br>";
+            echo "resultadoMD5: " . $resultadoMD5;
             
         ?>
     </body>
