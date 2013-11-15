@@ -38,7 +38,8 @@ class DaoUsuario {
         }
         
         $query = $this->getQueryCadastro($usuario);
-        $this->executarQuery($query, $this->ERRO_CADASTRAR);
+        
+        $this->conexaoComBanco->executarQuery($query, $this->ERRO_CADASTRAR);
     }
     
     public function alterarSenha($usuario, $novaSenha){        
@@ -47,7 +48,7 @@ class DaoUsuario {
         }
         
         $query = $this->getQueryAlterarSenha($usuario, $novaSenha);
-        $this->executarQuery($query, $this->ERRO_ALTERAR_SENHA);
+        $this->conexaoComBanco->executarQuery($query, $this->ERRO_ALTERAR_SENHA);
     }
     
     public function fazerPrimeiroAcesso($usuario){
@@ -56,7 +57,7 @@ class DaoUsuario {
         }
         
         $query = $this->getQueryFazerPrimeiroAcesso($usuario);
-        $this->executarQuery($query, $this->ERRO);
+        $this->conexaoComBanco->executarQuery($query, $this->ERRO);
     }
 
     public function existeLoginSenha($usuario){
@@ -93,7 +94,7 @@ class DaoUsuario {
     
     public function getListaUsuarios(){
         $query = $this->getQueryListaUsuarios();
-        $resultadoQuery = $this->executarQuery($query);
+        $resultadoQuery = $this->conexaoComBanco->executarQuery($query);
         
         if (!$resultadoQuery) {
             throw new Exception($this->ERRO);
@@ -112,18 +113,6 @@ class DaoUsuario {
         }
         
         return $lista;
-    }
-    
-    private function executarQuery($query, $mensagemErro){
-        $this->conexaoComBanco->iniciarConexao();
-        $resultadoQuery = mysql_query($query);
-        $this->conexaoComBanco->finalizarConexao();
-        
-        if (!$resultadoQuery) {
-            throw new Exception($mensagemErro);
-        }
-        
-        return $resultadoQuery;
     }
     
     private function getQueryCadastro($usuario){

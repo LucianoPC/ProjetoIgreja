@@ -42,6 +42,18 @@ class ConexaoComBanco {
     public function __destruct() {
         $this->finalizarConexao();
     }
+    
+    public function executarQuery($query, $mensagemErro){
+        $this->iniciarConexao();
+        $resultadoQuery = mysql_query($query);
+        $this->finalizarConexao();
+        
+        if (!$resultadoQuery) {
+            throw new Exception($mensagemErro);
+        }
+        
+        return $resultadoQuery;
+    }
 }
 
 ?>
