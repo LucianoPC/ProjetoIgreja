@@ -40,7 +40,13 @@ and open the template in the editor.
         
         <h2> Menu Principal <br> </h2>
         
+        <p> Usuario: <?php echo $_COOKIE['login']?> </p>
+        
+        <br>
+        
+        <p> Opções: </p>
         <p> <a href=" <?php echo $_SESSION['pathRaiz'] . "/view/telaAlterarSenha.php" ?>"> Alterar Senha </a> </p>
+        <p> <a href=" <?php echo $_SESSION['pathRaiz'] . "/view/telaCadastrarPessoa.php" ?>"> Cadastrar Pessoa </a> </p>
         
     </body>
 </html>

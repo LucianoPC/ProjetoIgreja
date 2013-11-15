@@ -26,7 +26,23 @@ class DaoPessoa {
     }
     
     public function cadastrar($pessoa) {
-        $query = $this->getQueryCadastro($usuario);
-        $this->executarQuery($query, $this->ERRO_CADASTRAR);
+        $query = $this->getQueryCadastro($pessoa);
+        $this->conexaoComBanco->executarQuery($query, $this->ERRO_CADASTRAR);
     }
+    
+    private function getQueryCadastro($pessoa){
+        $query = "INSERT INTO `t_pessoa` VALUES (";
+        $query .= "'" . $pessoa->getNome() . "', ";
+        $query .= "'" . $pessoa->getCidade() . "', ";
+        $query .= "'" . $pessoa->getEstado() . "', ";
+        $query .= "'" . $pessoa->getCep() . "', ";
+        $query .= "'" . $pessoa->getTelefone1() . "', ";
+        $query .= "'" . $pessoa->getTelefone2() . "', ";
+        $query .= "'" . $pessoa->getTelefone3() . "', ";
+        $query .= "'" . $pessoa->getEmail() . "', ";
+        $query .= "'" . $pessoa->getEstadocivil() . "')";
+
+        return $query;
+    }
+    
 }

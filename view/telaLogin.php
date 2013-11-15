@@ -23,7 +23,7 @@ and open the template in the editor.
             <table>
                 <tr>
                     <td> Login: </td>
-                    <td> <input type="text" name="login" maxlength="45" size="15"/> </td> 
+                    <td> <input type="text" name="login" maxlength="45" size="15" <?php echo $_POST['login']?>/> </td> 
                 </tr>
                 <tr>
                     <td> Senha: </td>
