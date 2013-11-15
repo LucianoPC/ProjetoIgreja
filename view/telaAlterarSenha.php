@@ -1,17 +1,18 @@
+<?php
+    ob_start();
+    session_start();
+
+    $pathRaiz = $_SERVER['DOCUMENT_ROOT']. substr($_SERVER['PHP_SELF'],0, strpos($_SERVER['PHP_SELF'],"/",1));
+
+    require_once $pathRaiz . '/control/ControleUsuario.php';
+    require_once $pathRaiz . '/model/Alerta.php';
+?>
 <!DOCTYPE html>
 <!--
 To change this license header, choose License Headers in Project Properties.
 To change this template file, choose Tools | Templates
 and open the template in the editor.
 -->
-
-<?php
-    $pathRaiz = $_SERVER['DOCUMENT_ROOT']. substr($_SERVER['PHP_SELF'],0, strpos($_SERVER['PHP_SELF'],"/",1));
-
-    require_once $pathRaiz . '/control/ControleUsuario.php';
-    require_once $pathRaiz . '/model/Alerta.php';
-?>
-
 <html>
     <head>
         <meta charset="UTF-8">
@@ -22,7 +23,13 @@ and open the template in the editor.
         <?php
             try {
                 $controleUsuario = new ControleUsuario();
-                $controleUsuario->verificarSeEstaLogado();
+                
+                try {
+                    $controleUsuario->verificarSeEstaLogado();
+                } catch (Exception $ex) {
+                    $pathRaiz = substr($_SERVER['PHP_SELF'],0, strpos($_SERVER['PHP_SELF'],"/",1));
+                    header('Location: ' . $pathRaiz . '/view/telaLogin.php');
+                }
                 
                 if ($controleUsuario->isPrimeiroAcesso($_COOKIE['login'])) {
                     echo "<br>Esse é o seu primeiro acesso, altere sua senha. <br> <br>";
@@ -30,8 +37,6 @@ and open the template in the editor.
             
             } catch (Exception $e) {
                 Alerta::alertar($e->getMessage());
-                $pathRaiz = substr($_SERVER['PHP_SELF'],0, strpos($_SERVER['PHP_SELF'],"/",1));
-                //header('Location: ' . $pathRaiz . '/view/telaLogin.php');
             }            
         ?>
         
@@ -54,7 +59,7 @@ and open the template in the editor.
                     <td> <input type="password" name="confirmarSenha" maxlength="20" size="15" /> </td> 
                 </tr>
                 <tr>
-                    <td> </td>
+                    <td> <p align="left"> <input type="submit" value="Voltar" name="voltar" /> </td>
                     <td> <p align="right"> <input type="submit" value="Confirmar" name="confirmar" /> </p> </td>
                 </tr>
             </table>
@@ -79,6 +84,13 @@ and open the template in the editor.
                     Alerta::alertar($ex->getMessage());
                 }
             }
+            
+            if(isset($_POST['voltar']))
+            {
+                $pathRaiz = substr($_SERVER['PHP_SELF'],0, strpos($_SERVER['PHP_SELF'],"/",1));
+                header('Location: ' . $pathRaiz . '/view/telaMenuPrincipal.php');
+            }
+            
             if(isset($_POST['confirmar']))
             {
                 $_POST['senha'] = md5($_POST['senha']);                

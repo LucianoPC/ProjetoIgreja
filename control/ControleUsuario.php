@@ -50,6 +50,11 @@ class ControleUsuario {
         $this->fazerLoginUsuario($usuario);
     }
     
+    public function sair(){
+        setcookie("login", "");
+        setcookie("senha", "");
+    }
+    
     private function fazerPrimeiroAcesso($login, $senha){
         $usuario = $this->getUsuario($login);
         if($usuario->getSenha() != $senha){

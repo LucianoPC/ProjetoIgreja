@@ -47,6 +47,9 @@ and open the template in the editor.
                     if ($controleUsuario->isPrimeiroAcesso($_COOKIE['login'])) {
                         $pathRaiz = substr($_SERVER['PHP_SELF'],0, strpos($_SERVER['PHP_SELF'],"/",1));
                         header('Location: ' . $pathRaiz . '/view/telaAlterarSenha.php');
+                    } else {
+                        $pathRaiz = substr($_SERVER['PHP_SELF'],0, strpos($_SERVER['PHP_SELF'],"/",1));
+                        header('Location: ' . $pathRaiz . '/view/telaMenuPrincipal.php');
                     }
                     
                 } catch (Exception $ex) {
