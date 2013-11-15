@@ -94,11 +94,7 @@ class DaoUsuario {
     
     public function getListaUsuarios(){
         $query = $this->getQueryListaUsuarios();
-        $resultadoQuery = $this->conexaoComBanco->executarQuery($query);
-        
-        if (!$resultadoQuery) {
-            throw new Exception($this->ERRO);
-        }
+        $resultadoQuery = $this->conexaoComBanco->executarQuery($query, $this->ERRO);
         
         $lista = array();
         

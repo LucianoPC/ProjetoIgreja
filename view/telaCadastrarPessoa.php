@@ -37,19 +37,7 @@ and open the template in the editor.
             }            
         ?>
         
-        <?php
-            if (isset($_POST['limpar'])) {
-                $_POST['nome'] = "";
-                $_POST['cidade'] = "";
-                $_POST['estado'] = "";
-                $_POST['cep'] = "";
-                $_POST['telefone1'] = "";
-                $_POST['telefone2'] = "";
-                $_POST['telefone3'] = "";
-                $_POST['email'] = "";
-                $_POST['estadoCivil'] = "";
-            }
-            
+        <?php            
             if(isset($_POST['voltar']))
             {
                 $pathRaiz = substr($_SERVER['PHP_SELF'],0, strpos($_SERVER['PHP_SELF'],"/",1));
@@ -64,7 +52,7 @@ and open the template in the editor.
                             $_POST['estado'], $_POST['cep'], $_POST['telefone1'], 
                             $_POST['telefone2'], $_POST['telefone3'], 
                             $_POST['email'], $_POST['estadoCivil']);
-                    
+                                        
                     Alerta::alertar("Pessoa cadastrada com sucesso!");
                     
                 } catch (Exception $ex) {
@@ -156,7 +144,7 @@ and open the template in the editor.
                 </tr>
                 <tr>
                     <td> <p align="left"> <input type="submit" value="Voltar" name="voltar" /> </td>
-                    <td> <p align="right"> <input type="submit" value="Limpar" name="limpar" /> </p> </td>
+                    <td> <p align="right"> <input type="reset" value="Limpar" name="limpar" /> </p> </td>
                 </tr>
                 
                 

@@ -40,12 +40,14 @@ and open the template in the editor.
             }            
         ?>
         
+        <h2> Alterar Senha <br> </h2>
+        
         <form action="" method="POST">
             <table>
                 <tr>
                     <td> Login: </td>
                     <td> <?php echo $_COOKIE['login'];?> </td> 
-                    </tr>
+                </tr>
                 <tr>
                     <td> Senha: </td>
                     <td> <input type="password" name="senha" maxlength="20" size="15" /> </td> 

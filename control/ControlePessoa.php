@@ -31,4 +31,12 @@ class ControlePessoa {
         $this->daoPessoa->cadastrar($pessoa);
     }
     
+    public function getListaConsultaNome($nome, $ordenarPor = "nome") {
+        return $this->daoPessoa->getListaConsultaNome($nome, $ordenarPor);
+    }
+    
+    public function getListaPessoas($ordenarPor = "nome") {
+        return $this->daoPessoa->getListaPessoas($ordenarPor);
+    }
+    
 }

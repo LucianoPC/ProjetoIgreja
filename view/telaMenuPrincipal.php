@@ -47,6 +47,27 @@ and open the template in the editor.
         <p> Opções: </p>
         <p> <a href=" <?php echo $_SESSION['pathRaiz'] . "/view/telaAlterarSenha.php" ?>"> Alterar Senha </a> </p>
         <p> <a href=" <?php echo $_SESSION['pathRaiz'] . "/view/telaCadastrarPessoa.php" ?>"> Cadastrar Pessoa </a> </p>
+        <p> <a href=" <?php echo $_SESSION['pathRaiz'] . "/view/telaConsultarPessoas.php" ?>"> Consultar Pessoa </a> </p>
         
+        <br>
+        
+        <form action="" method="POST">
+            <input type="submit" value="Sair" name="sair" />
+        </form>
+        
+        <?php
+            if (isset($_POST['sair'])) {
+                try {
+                    $controleUsuario = new ControleUsuario();
+                    $controleUsuario->sair();
+                    
+                    $pathRaiz = substr($_SERVER['PHP_SELF'],0, strpos($_SERVER['PHP_SELF'],"/",1));
+                    header('Location: ' . $pathRaiz . '/view/telaLogin.php');
+                    
+                } catch (Exception $e) {
+                    Alerta::alertar($e->getMessage());
+                }  
+            }
+        ?>
     </body>
 </html>
